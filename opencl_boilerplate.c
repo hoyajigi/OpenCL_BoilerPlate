@@ -14,10 +14,7 @@
 #include "cl_util.h"
 #include "timers.h"
 
-#define CHECK_ERROR(err) if (err != CL_SUCCESS) { fprintf(stderr, "[%s:%d] ERROR: %d\n",__FILE__,__LINE__,err);exit(EXIT_FAILURE); }
 #define ERROR(err) fprintf(stderr, "[%s:%d] ERROR: %s\n",__FILE__,__LINE__,err);exit(EXIT_FAILURE);
-
-char *get_source_code(const char *filename,size_t *len);
 
 int main()
 {
@@ -38,8 +35,8 @@ int main()
 	cl_event         ev_bp;
 	
 	// TODO : 
-	size_t lws[2]={64,4};
-	size_t gws[2]={1024,(size/2)/1024};
+//	size_t lws[2]={64,4};
+//	size_t gws[2]={1024,1024};
 
 
 	int i;
@@ -142,7 +139,7 @@ int main()
 	clFinish(cmd_queue);
 
 	// TODO : Set the arguments.
-	err=clSetKernelArg(kernel,0,sizeof(cl_mem),&m_array);
+	//err=clSetKernelArg(kernel,0,sizeof(),);
 
 	// Enqueue the kernel.
 	//err=clEnqueueNDRangeKernel(cmd_queue,kernel,1,NULL,gws,lws,0,NULL,NULL);
@@ -169,29 +166,4 @@ int main()
 	free(platforms);
 
 	return EXIT_SUCCESS;
-}
-
-char *get_source_code(const char *file_name,size_t *len)
-{
-	FILE *file=fopen(file_name,"r");
-	if(file==NULL){
-		ERROR("Failed to open source code");
-	}
-
-	fseek(file, 0, SEEK_END);
-	size_t length = (size_t)ftell(file);
-	rewind(file);
-	
-	char *source_code=(char *)malloc(length+1);
-	if(fread(source_code,length,1,file)!=1){
-		fclose(file);
-		free(source_code);
-
-		ERROR("Failed to read source code");
-	}
-	fclose(file);
-	
-	*len=length;
-	source_code[length]='\0';
-	return source_code;
 }
